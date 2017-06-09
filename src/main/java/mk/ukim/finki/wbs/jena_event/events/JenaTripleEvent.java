@@ -1,4 +1,4 @@
-package EventsTest;
+package mk.ukim.finki.wbs.jena_event.events;
 
 import org.springframework.context.ApplicationEvent;
 
