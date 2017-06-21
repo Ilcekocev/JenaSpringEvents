@@ -14,11 +14,11 @@ public class TdbHelper {
   private Dataset dataset;
 
 
-  public void openDataset(String dataSet) {
+  public void openDataset() {
     if (dataset != null) {
       dataset.close();
     }
-    dataset = loadDataset(dataSet);
+    dataset = loadDataset();
   }
 
   public void closeDataset() {
@@ -31,8 +31,8 @@ public class TdbHelper {
   }
 
 
-  private Dataset loadDataset(String name) {
-    String directory = datasetDirectoryPrefix + name;
+  private Dataset loadDataset() {
+    String directory = datasetDirectoryPrefix;
     return TDBFactory.createDataset(directory);
   }
 

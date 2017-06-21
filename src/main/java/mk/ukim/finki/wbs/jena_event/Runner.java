@@ -4,6 +4,10 @@ import mk.ukim.finki.wbs.jena_event.events.JenaEventListener;
 import mk.ukim.finki.wbs.jena_event.events.JenaTripleEvent;
 import mk.ukim.finki.wbs.jena_event.model.Employee;
 import mk.ukim.finki.wbs.jena_event.model.Task;
+import org.apache.commons.collections4.list.NodeCachingLinkedList;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.graph.Triple;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,68 +31,85 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        Employee emp = new Employee("John Smith",1);
-        Task task = new Task(1,"semWeb",new Date(),"123.45","345.67");
+
+        Employee emp = new Employee("John Smith",1,"123.45","345.67");
+        Task task = new Task("semWeb",new Date());
+
+
+        System.out.println("Im here !!!");
 
         // Prati trojka: resurs:vraboten , prperty:EmpName, literal:imeVraboten
-         System.out.println("Sending Event...");
-         String message = buildMessage("str","http://test/emp"+emp.getId(),"EmpName",emp.getName());
-         publisher.publishEvent(new JenaTripleEvent(this,message));
+        Node nodeEmp = NodeFactory.createURI("http://test/emp/"+emp.getId());
+        Node proEmpName = NodeFactory.createURI("http://test/emp/Name");
+        Node nodeName = NodeFactory.createLiteral(emp.getName());
 
-         // Prati trojka: resurs:task , prperty:TaskName, literal:imeTask
+        Triple trojka = Triple.create(nodeEmp,proEmpName,nodeName);
         System.out.println("Sending Event...");
-        message = buildMessage("str","http://test/task"+task.getId(),"TaskName",task.getName());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
 
-        // Prati trojka: resurs:Task , prperty:TaskTime, literal:vreme
-        System.out.println("Sending Event...");
-        message = buildMessage("str","http://test/task"+task.getId(),"TaskTime",task.getTime().toString());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        //  Prati trojka: resurs:Task , prperty:TaskTime, literal:vreme
 
-        // Prati trojka: resurs:task-location , prperty:longitude, literal:longitude
-        System.out.println("Sending Event...");
-        message = buildMessage("str","http://test/task"+task.getId()+"/loc","Longitude",task.getLon());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        Node nodeTask = NodeFactory.createURI("http://test/task/"+task.getName());
+        Node proTaskTime = NodeFactory.createURI("http://test/task/Time");
+        Node taskTime = NodeFactory.createLiteral(task.getTime().toString());
 
-        // Prati trojka: resurs:task-location , prperty:latitude, literal:latitude
+        trojka = Triple.create(nodeTask,proTaskTime,taskTime);
         System.out.println("Sending Event...");
-        message = buildMessage("str","http://test/task"+task.getId()+"/loc","Latitide",task.getLat());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
 
-        // Prati trojka: resurs:task , prperty:TaskLocation, resurs:task-location
+      // Prati trojka: resurs:emp-location , prperty:longitude, literal:longitude
+        Node nodeLocation = NodeFactory.createURI("http://test/emp/"+emp.getId()+"/loc");
+        Node proEmpLon = NodeFactory.createURI("http://test/emp/Longitude");
+        Node nodeLon = NodeFactory.createLiteral(emp.getLon());
+
+        trojka = Triple.create(nodeLocation,proEmpLon,nodeLon);
         System.out.println("Sending Event...");
-        message = buildMessage("obj","http://test/task"+task.getId(),"TaskLocation","http://test/task"+task.getId()+"/loc");
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
+
+        // Prati trojka: resurs:emp-location , prperty:latitude, literal:latitude
+
+        Node proEmpLat = NodeFactory.createURI("http://test/emp/Latitide");
+        Node nodeLat = NodeFactory.createLiteral(emp.getLat());
+
+        trojka = Triple.create(nodeLocation,proEmpLat,nodeLat);
+        System.out.println("Sending Event...");
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
+
+        // Prati trojka: resurs:emp , prperty:Location, resurs:emp-location
+        Node proEmpLoc = NodeFactory.createURI("http://test/emp/Location");
+
+         trojka = Triple.create(nodeEmp,proEmpLoc,nodeLocation);
+        System.out.println("Sending Event...");
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
+
 
         // Prati trojka: resurs:vraboten , prperty:Task, resurs:Task
+
+        Node proEmpTask = NodeFactory.createURI("http://test/emp/Task");
+
+        trojka = Triple.create(nodeEmp,proEmpTask,nodeTask);
         System.out.println("Sending Event...");
-        message = buildMessage("obj","http://test/emp"+emp.getId(),"Task","http://test/task"+task.getId());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
 
         //Send a second task to employee
 
-        Task task2 = new Task(2,"WebTask",new Date(),"425.45","645.67");
+        Task task2 = new Task("WebTask",new Date());
+
+        Node nodeTask2 = NodeFactory.createURI("http://test/task/"+task2.getName());
+        Node taskTime2 = NodeFactory.createLiteral(task2.getTime().toString());
+
+        trojka = Triple.create(nodeTask2,proTaskTime,taskTime2);
+        System.out.println("Sending Event...");
+        publisher.publishEvent(new JenaTripleEvent(this,trojka));
 
         System.out.println("Sending Event...");
-        message = buildMessage("str","http://test/task"+task2.getId(),"TaskName",task2.getName());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
+        publisher.publishEvent(new JenaTripleEvent(this,Triple.create(nodeEmp,proEmpTask,nodeTask2)));
 
-
-        System.out.println("Sending Event...");
-        message = buildMessage("obj","http://test/emp"+emp.getId(),"Task","http://test/task"+task2.getId());
-        publisher.publishEvent(new JenaTripleEvent(this,message));
 
         listener.printModel();
 
         context.close();
     }
 
-    private String buildMessage(String type,String sub,String pred,String obj) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(type).append("-")
-                .append(sub).append("-");
-        sb.append(pred).append("-")
-                .append(obj);
-        return sb.toString();
-    }
+
 }

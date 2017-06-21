@@ -7,18 +7,12 @@ import java.util.Date;
  */
 
 public class Task {
-    private int id;
     private String name;
     private Date time;
-    private String lon;
-    private String lat;
 
-    public Task(int id,String n, Date d, String la, String lo) {
-        this.id=id;
+    public Task(String n, Date d) {
         name=n;
         time = d;
-        lon=lo;
-        lat = la;
     }
 
     public String getName() {
@@ -30,15 +24,5 @@ public class Task {
         return time;
     }
 
-    public String getLon() {
-        return lon;
-    }
 
-    public String getLat() {
-        return lat;
-    }
-
-    public int getId() {
-        return id;
-    }
 }
