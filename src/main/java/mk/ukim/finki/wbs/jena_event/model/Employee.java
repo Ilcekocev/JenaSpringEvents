@@ -6,18 +6,18 @@ package mk.ukim.finki.wbs.jena_event.model;
 public class Employee {
     private String name;
     private int id;
-    private String lon;
-    private String lat;
+    private double lon;
+    private double lat;
 
-    public String getLon() {
+    public double getLon() {
         return lon;
     }
 
-    public String getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public Employee(String name, int id, String lat, String lon) {
+    public Employee(String name, int id, double lat, double lon) {
         this.name=name;
         this.id=id;
         this.lat=lat;

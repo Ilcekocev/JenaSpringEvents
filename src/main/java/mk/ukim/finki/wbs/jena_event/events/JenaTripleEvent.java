@@ -9,10 +9,15 @@ import org.springframework.context.ApplicationEvent;
 public class JenaTripleEvent extends ApplicationEvent {
 
     protected Triple trojka;
+    public boolean sim=false;
 
     public JenaTripleEvent(final Object inSource,Triple t) {
         super(inSource);
         trojka=t;
+    }
+
+    public void setSimFlag(boolean flag) {
+        sim=flag;
     }
 
     public Triple getMessage() {
