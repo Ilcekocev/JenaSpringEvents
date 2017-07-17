@@ -1,6 +1,6 @@
 package mk.ukim.finki.wbs.jena_event.events;
 
-import org.apache.jena.graph.Triple;
+import com.hp.hpl.jena.graph.Triple;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -11,7 +11,7 @@ public class JenaTripleEvent extends ApplicationEvent {
     protected Triple trojka;
     public boolean sim=false;
 
-    public JenaTripleEvent(final Object inSource,Triple t) {
+    public JenaTripleEvent(final Object inSource, Triple t) {
         super(inSource);
         trojka=t;
     }

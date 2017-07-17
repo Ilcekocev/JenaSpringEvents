@@ -1,11 +1,10 @@
 package mk.ukim.finki.wbs.jena_event.events;
 
-import mk.ukim.finki.wbs.jena_event.Simulator.FlatEarthDist;
-import mk.ukim.finki.wbs.jena_event.Simulator.Location;
-import mk.ukim.finki.wbs.jena_event.repository.TdbHelper;
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.Triple;
-import org.apache.jena.rdf.model.*;
+
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.graph.Triple;
+import com.hp.hpl.jena.rdf.model.*;
+import mk.ukim.finki.wbs.jena_event.simulator.FlatEarthDist;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +14,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class JenaEventListener {
 
-  TdbHelper tdbHelper = new TdbHelper();
+ // TdbHelper tdbHelper = new TdbHelper();
+  final static Model model = ModelFactory.createDefaultModel();
 
   //this event listener populates the model
   @EventListener(condition = "#event.sim==false")
   void handle(JenaTripleEvent event) {
-    tdbHelper.openDataset();
-    Model model = tdbHelper.getDataset().getDefaultModel();
+  //  tdbHelper.openDataset();
+   // Model model = tdbHelper.getDataset().getDefaultModel();
     System.out.println("Received <" + event.getMessage() + ">");
     Triple t = event.getMessage();
      Resource resource = model.createResource(t.getSubject().getURI());
@@ -31,15 +31,15 @@ public class JenaEventListener {
       resource.addProperty(property,obj.getURI());
     } else resource.addProperty(property,obj.getLiteralValue().toString());
 
-    tdbHelper.closeDataset();
+  //  tdbHelper.closeDataset();
   }
 
   //This event listener is for the simulation
   @EventListener(condition = "#event.sim==true")
   void handleSim(JenaTripleEvent event) {
 
-    tdbHelper.openDataset();
-    Model model = tdbHelper.getDataset().getDefaultModel();
+   // tdbHelper.openDataset();
+   // Model model = tdbHelper.getDataset().getDefaultModel();
     System.out.println("Received <" + event.getMessage() + ">");
     Triple t = event.getMessage();
 
@@ -97,19 +97,23 @@ public class JenaEventListener {
       }
     }
 
-    tdbHelper.closeDataset();
+   // tdbHelper.closeDataset();
   }
 
   public void printModel() {
-    tdbHelper.openDataset();
-    Model model = tdbHelper.getDataset().getDefaultModel();
+   // tdbHelper.openDataset();
+   // Model model = tdbHelper.getDataset().getDefaultModel();
     System.out.println("--Printing mk.ukim.finki.wbs.jena_event.model !---");
     model.write(System.out, "N-TRIPLES");
-    tdbHelper.closeDataset();
+   // tdbHelper.closeDataset();
   }
 
   public void sendNotification() {
     System.out.println("Sending notification to mobile device !");
+  }
+
+  public Model getModel() {
+    return model;
   }
 
 }
